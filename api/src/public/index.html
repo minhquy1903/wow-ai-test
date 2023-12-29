@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>ML Prediction</title>
+	</head>
+	<body>
+		<canvas
+			id="predictionCanvas"
+			width="800"
+			height="600"
+			style="border: 1px solid #000"
+		></canvas>
+		<script>
+			const canvas = document.getElementById("predictionCanvas");
+			const ctx = canvas.getContext("2d");
+			let isDrawing = false;
+			let startCoords = { x: 0, y: 0 };
+			let endCoords = { x: 0, y: 0 };
+
+			canvas.addEventListener("mousedown", (e) => {
+				isDrawing = true;
+				startCoords = { x: e.clientX, y: e.clientY };
+			});
+
+			canvas.addEventListener("mousemove", (e) => {
+				if (!isDrawing) return;
+
+				endCoords = { x: e.clientX, y: e.clientY };
+
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				ctx.strokeRect(
+					startCoords.x,
+					startCoords.y,
+					endCoords.x - startCoords.x,
+					endCoords.y - startCoords.y,
+				);
+			});
+
+			canvas.addEventListener("mouseup", () => {
+				isDrawing = false;
+				console.log("calling!!!");
+				const coordinates = {
+					start: { x: startCoords.x, y: startCoords.y },
+					end: { x: endCoords.x, y: endCoords.y },
+				};
+
+				fetch("http://localhost:3000/action", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ command: "predict", coordinates }),
+				})
+					.then((response) => response.text())
+					.then((data) => console.log(data))
+					.catch((error) => console.error("Error:", error));
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package MLService;
+
+service ProcessingStatus {
+    rpc GetStatus (GetStatusRequest) returns (GetStatusReply) {}
+    rpc ImportData(ImportFilesRequest) returns (ImportFilesResponse);
+  }
+  
+  message GetStatusRequest {
+    string token = 1;
+  }
+
+  message GetStatusReply {
+    string status = 1;
+  }
+  
+
+  message ImportFilesRequest {
+    repeated FileImportInfo fileImports = 1;
+  }
+  
+  message FileImportInfo {
+    string fileName = 1;
+    string mimetype = 2;
+    FileContent fileContent = 3;
+  }
+  
+  message FileContent {
+    oneof content {
+      bytes binaryContent = 1;
+      string base64Content = 2;
+    }
+  }
+  
+  message ImportFilesResponse {
+    bool isSuccess = 1;
+  }
+  

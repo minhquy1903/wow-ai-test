@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+    api:
+        build:
+            context: .
+            dockerfile: api/Dockerfile
+        ports:
+            - "3000:3000"
+        networks:
+            - wow_ai_test
+    grpc_ml:
+        build:
+            context: .
+            dockerfile: grpc-ml/Dockerfile
+        networks:
+            - wow_ai_test
+
+networks:
+    wow_ai_test:
